@@ -12,6 +12,10 @@ public class WebSecurityConfig {
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http
+
+//      Disable csrf auth
+      .csrf(csrf -> csrf.disable())
+
 //      All request will need to be authenticated, unauthenticated request will return 403 Forbidden
       .authorizeHttpRequests(authorizeRequests ->
         authorizeRequests.anyRequest().authenticated()
