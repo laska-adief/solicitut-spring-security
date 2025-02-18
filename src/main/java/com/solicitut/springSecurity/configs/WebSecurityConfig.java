@@ -20,7 +20,10 @@ public class WebSecurityConfig {
 //      In Browser display popup to input username and password
 //      In Postman set the Authorization -> Auth Type (Basic Auth) -> set username and password
 //      Username and Password is based on that set in Spring Security Config in application.properties
-      .httpBasic(Customizer.withDefaults());
+      .httpBasic(Customizer.withDefaults())
+
+//      Instead of popup it will display form to input username and password
+      .formLogin(Customizer.withDefaults());
     return http.build();
   }
 }
