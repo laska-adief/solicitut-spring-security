@@ -1,17 +1,27 @@
 package com.solicitut.springSecurity.configs;
 
+import com.solicitut.springSecurity.services.UserDetailService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 public class WebSecurityConfig {
+
+  private final UserDetailService userDetailService;
+
+  public WebSecurityConfig(UserDetailService userDetailService) {
+    this.userDetailService = userDetailService;
+  }
 
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -38,7 +48,8 @@ public class WebSecurityConfig {
   }
 
 //  UserDetailsService interface is used for retrieving user-related data for authentication
-  @Bean
+//  Comment out to make UserDetailService fetch from database
+//  @Bean
   public UserDetailsService userDetailsService() {
     UserDetails john = User.withUsername("john").password("john").roles("USER").build();
     UserDetails alice = User.withUsername("alice").password("alice").roles("USER").build();
@@ -50,5 +61,13 @@ public class WebSecurityConfig {
     UserDetails noop = User.withUsername("noop").password("{noop}noop").roles("USER").build();
 
     return new InMemoryUserDetailsManager(john, alice, noop);
+  }
+
+  @Bean
+  public AuthenticationProvider authenticationProvider() {
+    DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+    provider.setUserDetailsService(userDetailService);
+    provider.setPasswordEncoder(NoOpPasswordEncoder.getInstance());
+    return provider;
   }
 }
