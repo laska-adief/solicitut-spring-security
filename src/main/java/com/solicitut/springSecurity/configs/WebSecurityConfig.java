@@ -22,7 +22,9 @@ public class WebSecurityConfig {
 
 //      All request will need to be authenticated, unauthenticated request will return 403 Forbidden
       .authorizeHttpRequests(authorizeRequests ->
-        authorizeRequests.anyRequest().authenticated()
+        authorizeRequests
+          .requestMatchers("/api/auth/**").permitAll()
+          .anyRequest().authenticated()
       )
 //      Default Config authentication
 //      In Browser display popup to input username and password
